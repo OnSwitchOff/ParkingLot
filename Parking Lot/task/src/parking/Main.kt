@@ -1,13 +1,36 @@
 package parking
 
 fun main() {
-    val parking = Parking(20)
+    var parking: Parking? = null
     //parking.test()
     while (true) {
         val input = readLine()!!.split(" ")
         when {
-            input[0] == "park" -> parking.park(Car(input[2],input[1]))
-            input[0] == "leave" -> parking.leave(input[1].toInt())
+            input[0] == "create" -> {
+                parking = Parking(input[1].toInt())
+                println("Created a parking lot with ${input[1].toInt()} spots.")
+            }
+            input[0] == "park" -> {
+                try {
+                    parking!!.park(Car(input[2],input[1]))
+                } catch (e: Exception) {
+                    println("Sorry, a parking lot has not been created.")
+                }
+            }
+            input[0] == "leave" -> {
+                try {
+                    parking!!.leave(input[1].toInt())
+                } catch (e: Exception) {
+                    println("Sorry, a parking lot has not been created.")
+                }
+            }
+            input[0] == "status" -> {
+                try {
+                    parking!!.printStatus()
+                } catch (e: Exception) {
+                    println("Sorry, a parking lot has not been created.")
+                }
+            }
             input[0] == "exit" -> break
         }
     }
@@ -50,6 +73,15 @@ class Parking(spotSize: Int) {
             println("Spot $n is free.")
         } else {
             println("There is no car in spot $n.")
+        }
+    }
+
+    fun printStatus() {
+        when {
+            spotList.all { s -> s.state == SpotState.FREE } -> println("Parking lot is empty.")
+            else -> spotList.forEach { s -> if (s.state == SpotState.BUSY) {
+                println("${s.n} ${s.car!!.number} ${s.car!!.color}")
+            }}
         }
     }
 }
