@@ -10,29 +10,22 @@ fun main() {
                 parking = Parking(input[1].toInt())
                 println("Created a parking lot with ${input[1].toInt()} spots.")
             }
-            input[0] == "park" -> {
-                try {
-                    parking!!.park(Car(input[2],input[1]))
-                } catch (e: Exception) {
-                    println("Sorry, a parking lot has not been created.")
-                }
-            }
-            input[0] == "leave" -> {
-                try {
-                    parking!!.leave(input[1].toInt())
-                } catch (e: Exception) {
-                    println("Sorry, a parking lot has not been created.")
-                }
-            }
-            input[0] == "status" -> {
-                try {
-                    parking!!.printStatus()
-                } catch (e: Exception) {
-                    println("Sorry, a parking lot has not been created.")
-                }
-            }
+            input[0] == "park" -> tryPark { parking!!.park(Car(input[2],input[1])) }
+            input[0] == "leave" -> tryPark { parking!!.leave(input[1].toInt()) }
+            input[0] == "status" -> tryPark { parking!!.printStatus() }
+            input[0] == "spot_by_color" -> tryPark { parking!!.spot_by_color(input[1]) }
+            input[0] == "reg_by_color" -> tryPark { parking!!.reg_by_color(input[1]) }
+            input[0] == "spot_by_reg" -> tryPark { parking!!.spot_by_reg(input[1]) }
             input[0] == "exit" -> break
         }
+    }
+}
+
+fun tryPark(f: () -> Unit) {
+    try {
+        f()
+    } catch (e: Exception) {
+        println("Sorry, a parking lot has not been created.")
     }
 }
 
@@ -73,6 +66,30 @@ class Parking(spotSize: Int) {
             println("Spot $n is free.")
         } else {
             println("There is no car in spot $n.")
+        }
+    }
+
+    fun reg_by_color(color: String) {
+        val result = spotList.filter { s -> s.state == SpotState.BUSY && s.car!!.color.equals(color, ignoreCase = true) }
+        when {
+            result.isEmpty() -> println("No cars with color $color were found.")
+            else -> println(result.joinToString(", "){ s -> s.car!!.number })
+        }
+    }
+
+    fun spot_by_color(color: String) {
+        val result = spotList.filter { s -> s.state == SpotState.BUSY && s.car!!.color.equals(color, ignoreCase = true) }
+        when {
+            result.isEmpty() -> println("No cars with color $color were found.")
+            else -> println(result.joinToString(", "){ s -> s.n.toString() })
+        }
+    }
+
+    fun spot_by_reg(num: String) {
+        val result = spotList.filter { s -> s.state == SpotState.BUSY && s.car!!.number.equals(num, ignoreCase = true) }
+        when {
+            result.isEmpty() -> println("No cars with registration number $num were found.")
+            else -> println(result.joinToString(", "){ s -> s.n.toString() })
         }
     }
 
