@@ -1,12 +1,15 @@
 package parking
 
 fun main() {
-    val parking = Parking(2)
-    parking.test()
-    val input = readLine()!!.split(" ")
-    when {
-        input[0] == "park" -> parking.park(Car(input[2],input[1]))
-        input[0] == "leave" -> parking.leave(input[1].toInt())
+    val parking = Parking(20)
+    //parking.test()
+    while (true) {
+        val input = readLine()!!.split(" ")
+        when {
+            input[0] == "park" -> parking.park(Car(input[2],input[1]))
+            input[0] == "leave" -> parking.leave(input[1].toInt())
+            input[0] == "exit" -> break
+        }
     }
 }
 
@@ -37,7 +40,7 @@ class Parking(spotSize: Int) {
             spot.car = car
             println("${car.color} car parked in spot ${spot.n}.")
         } else {
-            println("There is no free spots.")
+            println("Sorry, the parking lot is full.")
         }
     }
 
